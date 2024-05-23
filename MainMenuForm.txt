@@ -1,0 +1,78 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using MySql.Data.MySqlClient;
+
+namespace ChistyulyaApp
+{
+    public partial class MainMenuForm : Form
+    {
+        public MainMenuForm()
+        {
+            InitializeComponent();
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            LoginForm f = new LoginForm();
+            f.ShowDialog();
+        }
+
+        private void MainMenuForm_Load(object sender, EventArgs e)
+        {
+            label1.Text = "Сотрудник \n" + buffer.currentUserName;
+            if (buffer.currentUserRole == "Менеджер")
+            {
+                buttonStaf.Visible = false;
+            }
+            else
+            {
+                buttonStaf.Visible = true;
+            }
+        }
+
+        private void buttonClients_Click(object sender, EventArgs e)
+        {
+            ClientsForm f = new ClientsForm();
+            this.Hide();
+            f.ShowDialog();
+        }
+
+        private void buttonServices_Click(object sender, EventArgs e)
+        {
+            ServicesForm f = new ServicesForm();
+            this.Hide();
+            f.ShowDialog();
+        }
+
+        private void buttonOrders_Click(object sender, EventArgs e)
+        {
+            OrdersForm f = new OrdersForm();
+            this.Hide();
+            f.ShowDialog();
+        }
+
+        private void buttonStaf_Click(object sender, EventArgs e)
+        {
+            StafForm f = new StafForm();
+            this.Hide();
+            f.ShowDialog();
+        }
+
+        private void buttonRequest_Click(object sender, EventArgs e)
+        {
+            RequestsForm f = new RequestsForm();
+            this.Hide();
+            f.ShowDialog();
+
+        }
+
+    }
+}
