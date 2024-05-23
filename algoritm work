@@ -89,3 +89,114 @@ namespace TEST
     }
 НЕ ЗАБУДЬТЕ ПРАВОЙ КНОПКОЙ МЫШИ ПО ПРОЕКТУ И НАЖАТЬ ДОБАВИТЬ НОВЫЙ ЭЛЕМЕНТ db в него нужно добавить код подключения
 ====================================================================================================================================================
+РЕГИСТРАЦИЯ 5 текстбоксов фио тел лог пароль тип(Менеджер заказчик тд) и кнопка
+public partial class RegisterForm : Form
+ {
+     public RegisterForm()
+     {
+         InitializeComponent();
+         userFioField.Text = "Введите имя";
+         userFioField.ForeColor = Color.Gray;
+
+     }
+
+     private void userNameField_Enter(object sender, EventArgs e)
+     {
+         if (userFioField.Text == "Введите имя")
+         {
+             userFioField.Text = "";
+             userFioField.ForeColor = Color.Black;
+         }
+     }
+
+     private void userNameField_Leave(object sender, EventArgs e)
+     {
+         if (userFioField.Text == "")
+         {
+             userFioField.Text = "Введите имя";
+             userFioField.ForeColor = Color.Gray;
+         }
+     }
+
+     private void Register_Click(object sender, EventArgs e)
+     {
+         if (userFioField.Text == "Введите имя"  userFioField.Text == "")
+         {
+             MessageBox.Show("Введите имя");
+             return;
+         }
+
+         if (UserPhoneField.Text == "Введите Фамилию"  UserPhoneField.Text == "")
+         {
+             MessageBox.Show("Введите фамилию");
+             return;
+         }
+
+         if (passwordField.Text == "Введите логин"  passwordField.Text == "")
+         {
+             MessageBox.Show("Введите логин");
+             return;
+         }
+
+         if (type.Text == "Введите пароль"  type.Text == "")
+         {
+             MessageBox.Show("Введите пароль");
+             return;
+         }
+
+         if (isUserExist())
+         {
+             return;
+         }
+
+         DB db = new DB();
+         MySqlCommand command = new MySqlCommand("INSERT INTO users (fio, phone, login, password, type) VALUES (@fio, @phone, @login, @password, @type);", db.getConnection());
+
+         command.Parameters.Add("@fio", MySqlDbType.VarChar).Value = userFioField.Text;
+         command.Parameters.Add("@phone", MySqlDbType.VarChar).Value = UserPhoneField.Text;
+         command.Parameters.Add("@login", MySqlDbType.VarChar).Value = loginUsers.Text;
+         command.Parameters.Add("@password", MySqlDbType.VarChar).Value = passwordField.Text;
+         command.Parameters.Add("@type", MySqlDbType.VarChar).Value = type.Text;
+
+
+         db.openConnnection();
+
+         if (command.ExecuteNonQuery() == 1)
+             MessageBox.Show("Аккаунт был создан");
+         else
+             MessageBox.Show("Аккаунт не был создан");
+
+         db.closeConnnection();
+     }
+
+     public Boolean isUserExist()
+     {
+         DB db = new DB();
+
+         DataTable table = new DataTable();
+
+         MySqlDataAdapter adapter = new MySqlDataAdapter();
+
+         MySqlCommand command = new MySqlCommand("SELECT * FROM users WHERE login = @ul", db.getConnection());
+         command.Parameters.Add("@ul", MySqlDbType.VarChar).Value = passwordField.Text;
+
+         adapter.SelectCommand = command;
+         adapter.Fill(table);
+
+         if (table.Rows.Count > 0)
+         {
+             MessageBox.Show("Такой логин уже есть, введите другой");
+             return true;
+         }
+
+         return false;
+     }
+
+     private void RegisterLabel_Click(object sender, EventArgs e)
+     {
+         this.Hide();
+         LoginForm loginform = new LoginForm();
+         loginform.ShowDialog();
+         
+     }
+ }
