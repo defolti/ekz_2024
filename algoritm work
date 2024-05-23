@@ -200,3 +200,148 @@ public partial class RegisterForm : Form
          
      }
  }
+==========================================================================
+using MySql.Data.MySqlClient;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace TEST
+{
+    public partial class MainForm : Form
+    {
+        public MainForm()
+        {
+            InitializeComponent();
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            LoadMasters();
+            LoadClients();
+            LoadRequests();
+        }
+
+        private void LoadMasters()
+        {
+            try
+            {
+                DB db = new DB();
+                MySqlCommand command = new MySqlCommand("SELECT id, fio FROM masters", db.getConnection());
+
+                MySqlDataAdapter adapter = new MySqlDataAdapter(command);
+                DataTable table = new DataTable();
+
+                adapter.Fill(table);
+
+                masterComboBox.DataSource = table;
+                masterComboBox.DisplayMember = "fio";
+                masterComboBox.ValueMember = "id";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка загрузки данных мастеров: " + ex.Message);
+            }
+        }
+
+        private void LoadClients()
+        {
+            try
+            {
+                DB db = new DB();
+                MySqlCommand command = new MySqlCommand("SELECT id, fio FROM clients", db.getConnection());
+
+                MySqlDataAdapter adapter = new MySqlDataAdapter(command);
+                DataTable table = new DataTable();
+
+                adapter.Fill(table);
+
+                clientComboBox.DataSource = table;
+                clientComboBox.DisplayMember = "fio";
+                clientComboBox.ValueMember = "id";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка загрузки данных клиентов: " + ex.Message);
+            }
+        }
+
+        private void LoadRequests()
+        {
+            try
+            {
+                DB db = new DB();
+                MySqlCommand command = new MySqlCommand("SELECT * FROM requests", db.getConnection());
+
+                MySqlDataAdapter adapter = new MySqlDataAdapter(command);
+                DataTable table = new DataTable();
+
+                adapter.Fill(table);
+                dataGridView1.DataSource = table;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка загрузки данных заявок: " + ex.Message);
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            String carType = deviceTypeField.Text;  // Используем соответствующее поле
+            String carModel = deviceModelField.Text;  // Используем соответствующее поле
+            String problemDescription = problemDescriptionField.Text;
+            String startDate = DateTime.Now.ToString("yyyy-MM-dd"); // Текущая дата
+            String requestStatus = "Pending"; // Значение по умолчанию для статуса
+            int masterID = Convert.ToInt32(masterComboBox.SelectedValue);
+            int clientID = Convert.ToInt32(clientComboBox.SelectedValue);
+
+            // Проверка на пустые значения в полях
+            if (string.IsNullOrEmpty(carType)  string.IsNullOrEmpty(carModel) 
+                string.IsNullOrEmpty(problemDescription))
+            {
+                MessageBox.Show("Заполните все поля");
+                return;
+            }
+
+            try
+            {
+                DB db = new DB();
+                MySqlCommand command = new MySqlCommand("INSERT INTO requests (carType, carModel, problemDescription, startDate, requestStatus, masterID, clientID) VALUES (@carType, @carModel, @problemDescription, @startDate, @requestStatus, @masterID, @clientID);", db.getConnection());
+command.Parameters.Add("@carType", MySqlDbType.VarChar).Value = carType;
+                command.Parameters.Add("@carModel", MySqlDbType.VarChar).Value = carModel;
+                command.Parameters.Add("@problemDescription", MySqlDbType.VarChar).Value = problemDescription;
+                command.Parameters.Add("@startDate", MySqlDbType.VarChar).Value = startDate;
+                command.Parameters.Add("@requestStatus", MySqlDbType.VarChar).Value = requestStatus;
+                command.Parameters.Add("@masterID", MySqlDbType.Int32).Value = masterID;
+                command.Parameters.Add("@clientID", MySqlDbType.Int32).Value = clientID;
+
+                db.openConnnection();
+
+                if (command.ExecuteNonQuery() == 1)
+                {
+                    MessageBox.Show("Заявка была успешно отправлена");
+                    LoadRequests(); // Перезагрузка данных после успешной отправки заявки
+                }
+                else
+                {
+                    MessageBox.Show("Ошибка при отправке заявки");
+                }
+
+                db.closeConnnection();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка отправки данных: " + ex.Message);
+            }
+        }
+    }
+}
+
+ЧАСТИНО ПРАВИЛЬНО
