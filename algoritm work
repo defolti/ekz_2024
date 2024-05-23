@@ -201,6 +201,9 @@ public partial class RegisterForm : Form
      }
  }
 ==========================================================================
+ОСНОВНАЯ ФОРМА ДОБАВЛЕНИЕ МАСТЕР КЛИЕНТ ВЫБОР КОМБОБОКС
+3 ТЕКСТБОКСА
+КНОПКА ДОБАВИТЬ
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
