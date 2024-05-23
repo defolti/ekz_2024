@@ -1,0 +1,91 @@
+Для начала работы с программой Visual Studio, нам необходимо предпринять следующие шаги:  1) установить пакет MySqlData 2)Прописать строку подключения с указанием пароля и логина базы данных (localhost root), проверить код нашего подключения, 
+потому что могут возникнуть ошибки (Например, нужно удостовериться что у вас есть строка в общем списке using MySql.Data.MySqlClient;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+==========================================================================
+Именно!  Теперь определимся с темой нашего приложения. Их много, на выбор, например Ветеринарная клиника, Продажа нижнего белья, Молочные продукты и прочее. 
+Наш выбор остановился на простом ремонте механических устройств. В нашем приложении должны быть реализованы: Простая авторизация, форма просмотра всех существующих заявок, создание и редактирование))
+==========================================================================
+Теперь перейдем к коду: Напишем простой код подключения к нашей бд:
+КЛАСС ПОДКЛЮЧЕНИЯ К БАЗЕ ДАННЫХ
+internal class DB
+{
+     MySqlConnection connection = new MySqlConnection("server=localhost;port = 3306; username = root; password = root; database = italex");
+
+     public void openConnnection()
+     {
+         if (connection.State == System.Data.ConnectionState.Closed)
+             connection.Open();
+     }
+
+     public void closeConnnection()
+     {
+         if (connection.State == System.Data.ConnectionState.Open)
+             connection.Close();
+     }
+     
+     public MySqlConnection getConnection()
+     {
+         return connection;
+     }
+}
+==========================================================================
+Продолжение:
+3. Создаем форму авторизации, в ней 2 текстбоксf, 1 кнопка вход
+namespace TEST
+{
+    public partial class LoginForm : Form
+    {
+        public LoginForm()
+        {
+            InitializeComponent();
+
+            this.PassField.AutoSize = true;
+            this.PassField.Size = new Size(this.PassField.Size.Width, 50);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            String loginUser = LoginField.Text;
+            String passUser = PassField.Text;
+
+            if (string.IsNullOrEmpty(loginUser) || string.IsNullOrEmpty(passUser))
+            {
+                MessageBox.Show("Введите логин и пароль");
+                return;
+            }
+
+            DB db = new DB();
+
+            DataTable table = new DataTable();
+
+            MySqlDataAdapter adapter = new MySqlDataAdapter();
+
+            MySqlCommand command = new MySqlCommand("SELECT * FROM users WHERE login = @ul AND pass = @up", db.getConnection());
+            command.Parameters.Add("@ul", MySqlDbType.VarChar).Value = loginUser;
+            command.Parameters.Add("@up", MySqlDbType.VarChar).Value = passUser;
+
+            adapter.SelectCommand = command;
+            adapter.Fill(table);
+
+            if (table.Rows.Count > 0)
+            {
+                this.Hide();
+                MainForm mainForm = new MainForm();
+                mainForm.Show();
+            }
+            else
+            {
+                MessageBox.Show("Неправильный логин или пароль");
+            }
+        }
+    }
+НЕ ЗАБУДЬТЕ ПРАВОЙ КНОПКОЙ МЫШИ ПО ПРОЕКТУ И НАЖАТЬ ДОБАВИТЬ НОВЫЙ ЭЛЕМЕНТ db в него нужно добавить код подключения
+====================================================================================================================================================
